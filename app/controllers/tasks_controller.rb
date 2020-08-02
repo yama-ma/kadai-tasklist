@@ -1,12 +1,11 @@
 class TasksController < ApplicationController
+  
+  before_action :require_user_logged_in, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+  before_action :correct_user, only: [:show, :edit, :update, :destroy]
 
   
   def index
-      if logged_in? 
         @tasks = current_user.tasks.order(id: :desc).page(params[:page])
-      else
-        redirect_to login_path
-      end
   end
 
   def show
@@ -21,10 +20,10 @@ class TasksController < ApplicationController
       @task = current_user.tasks.build(message_params)
 
       if @task.save
-        flash[:success] = 'Message が正常に投稿されました'
+        flash[:success] = 'タスク が正常に投稿されました'
         redirect_to @task
       else
-        flash.now[:danger] = 'Message が投稿されませんでした'
+        flash.now[:danger] = 'タスク が投稿されませんでした'
         render :new
       end
   end
@@ -37,10 +36,10 @@ class TasksController < ApplicationController
       @task = Task.find(params[:id])
 
       if @task.update(message_params)
-        flash[:success] = 'Message は正常に更新されました'
+        flash[:success] = 'タスク は正常に更新されました'
         redirect_to @task
       else
-        flash.now[:danger] = 'Message は更新されませんでした'
+        flash.now[:danger] = 'タスク は更新されませんでした'
         render :edit
       end
   end
@@ -49,7 +48,7 @@ class TasksController < ApplicationController
       @task = Task.find(params[:id])
       @task.destroy
       
-      flash[:success] = 'Message は正常に削除されました'
+      flash[:success] = 'タスク は正常に削除されました'
       redirect_to tasks_url
   end
 
